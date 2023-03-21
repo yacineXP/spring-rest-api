@@ -54,7 +54,7 @@ public ResponseEntity<Taco> tacoById(@PathVariable("id") Long id) {
     return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
 }
 ```
-In this code example, the @GetMapping("/{id}") annotation specifies that this method should handle incoming HTTP GET requests with a path that includes a variable id. The tacoRepository.findById(id) method is used to retrieve the Taco with the specified ID from the database. If the Taco exists, it is returned in a ResponseEntity with an HTTP status code of 200 OK. If the Taco does not exist, a ResponseEntity with an HTTP status code of 404 NOT FOUND is returned instead.
+In this code example, the ```@GetMapping("/{id}")``` annotation specifies that this method should handle incoming HTTP GET requests with a path that includes a variable id. The ```tacoRepository.findById(id)``` method is used to retrieve the Taco with the specified ID from the database. If the Taco exists, it is returned in a ResponseEntity with an HTTP status code of **200 OK**. If the Taco does not exist, a ResponseEntity with an HTTP status code of **404 NOT FOUND** is returned instead.
 
 <div id="acknowledgements"></div>
 
