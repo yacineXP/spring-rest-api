@@ -43,18 +43,46 @@ This project uses Java Spring to provide RESTful endpoints for the Taco Cloud ap
 <div id="code-examples"></div>
 
 ## 💻 Code Examples
-An example of a Spring MVC controller method that handles an incoming HTTP request to retrieve a Taco by its ID:
+**1. An exemple of the tacoController:**
 ```java
-@GetMapping("/{id}")
-public ResponseEntity<Taco> tacoById(@PathVariable("id") Long id) {
-    Optional<Taco> optTaco = tacoRepository.findById(id);
+@RestController
+@RequestMapping(path="/api/tacos",                
+                produces="application/json")
+@CrossOrigin(origins="http://localhost:8080")       
+public class TacoController {
+  private TacoRepository tacoRepo;
+
+  public TacoController(TacoRepository tacoRepo) {
+    this.tacoRepo = tacoRepo;
+  }
+
+  @GetMapping(params="recent")
+  public Iterable<Taco> recentTacos() {            
+    PageRequest page = PageRequest.of(
+            0, 12, Sort.by("createdAt").descending());
+    return tacoRepo.findAll(page).getContent();
+  }
+
+  @PostMapping(consumes="application/json")
+  @ResponseStatus(HttpStatus.CREATED)
+  public Taco postTaco(@RequestBody Taco taco) {
+    return tacoRepo.save(taco);
+  }
+
+  @GetMapping("/{id}")
+  public Taco tacoById(@PathVariable("id") Long id) {
+    Optional<Taco> optTaco = tacoRepo.findById(id);
     if (optTaco.isPresent()) {
-        return new ResponseEntity<>(optTaco.get(), HttpStatus.OK);
+      return optTaco.get();
     }
-    return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+    return null;
+  }
+
 }
 ```
-In this code example, the ```@GetMapping("/{id}")``` annotation specifies that this method should handle incoming HTTP GET requests with a path that includes a variable id. The ```tacoRepository.findById(id)``` method is used to retrieve the Taco with the specified ID from the database. If the Taco exists, it is returned in a ResponseEntity with an HTTP status code of **200 OK**. If the Taco does not exist, a ResponseEntity with an HTTP status code of **404 NOT FOUND** is returned instead.
+The TacoController is a Spring REST controller that handles HTTP requests related to tacos. It is annotated with ```@RestController```, ```@RequestMapping```, and ```@CrossOrigin``` annotations. The ```@RestController``` annotation indicates that this class contains RESTful web service methods. The ```@RequestMapping``` annotation is used to map HTTP requests to the class level and ```@CrossOrigin``` is used to enable Cross-Origin Resource Sharing (CORS) for the web service.
+
+The class has three methods for handling GET and POST requests. The ```recentTacos()``` method handles GET requests with the "recent" parameter and returns a list of the most recently added tacos. The ```postTaco()``` method handles POST requests with JSON data and saves the taco to the database. The ```tacoById()``` method handles GET requests with a specific ID parameter and returns the taco with that ID if it exists in the database.
 
 <div id="acknowledgements"></div>
 
